@@ -14,4 +14,37 @@
             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
         ></textarea>
     </div>
+
+    <div>
+        @include('livewire.cv-builder.partials.ai-button', [
+            'action' => 'polishSummary',
+            'label' => '✨ Improve with AI',
+        ])
+        @include('livewire.cv-builder.partials.ai-error')
+    </div>
+
+    @if (filled($summary['polished'] ?? null))
+        <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4 space-y-3">
+            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-700">AI suggestion</p>
+            <p class="text-sm text-gray-800 leading-relaxed">{{ $summary['polished'] }}</p>
+            <div class="flex items-center gap-3">
+                <button
+                    type="button"
+                    wire:click="acceptPolishedSummary"
+                    wire:loading.attr="disabled"
+                    class="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                >
+                    Use this
+                </button>
+                <button
+                    type="button"
+                    wire:click="discardPolishedSummary"
+                    wire:loading.attr="disabled"
+                    class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900"
+                >
+                    Discard
+                </button>
+            </div>
+        </div>
+    @endif
 </div>

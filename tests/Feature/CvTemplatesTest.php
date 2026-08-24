@@ -59,10 +59,17 @@ class CvTemplatesTest extends TestCase
     #[DataProvider('templateKeys')]
     public function test_template_renders_without_error_when_optional_sections_are_empty(string $key): void
     {
-        $cv = Cv::factory()->create(['template' => $key]);
+        // A fixed name (rather than the factory's fake()->name()) keeps this
+        // assertion deterministic — a Faker-generated name containing an
+        // apostrophe would be HTML-escaped by Blade and never match a raw
+        // stringContains check.
+        $cv = Cv::factory()->create([
+            'template' => $key,
+            'personal_info' => ['name' => 'Jordan Smith', 'email' => '', 'phone' => '', 'location' => '', 'links' => [], 'photo_path' => null],
+        ]);
 
         $html = view($cv->templateView(), ['cv' => $cv])->render();
 
-        $this->assertStringContainsString($cv->personal_info['name'], $html);
+        $this->assertStringContainsString('Jordan Smith', $html);
     }
 }

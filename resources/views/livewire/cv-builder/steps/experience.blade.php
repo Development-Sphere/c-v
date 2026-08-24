@@ -14,6 +14,8 @@
         </button>
     </div>
 
+    @include('livewire.cv-builder.partials.ai-error')
+
     <div class="space-y-4">
         @foreach ($experience as $index => $entry)
             <div wire:key="experience-{{ $index }}" class="border border-gray-200 rounded-lg p-4 space-y-3">
@@ -44,7 +46,16 @@
                 <div>
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-gray-700">Highlights</span>
-                        <button type="button" wire:click="addExperienceBullet({{ $index }})" wire:loading.attr="disabled" class="text-sm text-indigo-600 hover:text-indigo-800">+ Add bullet</button>
+                        <div class="flex items-center gap-3">
+                            @if (count(array_filter($entry['bullets'] ?? [], fn ($b) => trim($b) !== '')) > 0)
+                                @include('livewire.cv-builder.partials.ai-button', [
+                                    'action' => 'improveBullets('.$index.')',
+                                    'target' => 'improveBullets',
+                                    'label' => '✨ Improve with AI',
+                                ])
+                            @endif
+                            <button type="button" wire:click="addExperienceBullet({{ $index }})" wire:loading.attr="disabled" class="text-sm text-indigo-600 hover:text-indigo-800">+ Add bullet</button>
+                        </div>
                     </div>
 
                     <div class="mt-2 space-y-2">
@@ -60,6 +71,25 @@
                             </div>
                         @endforeach
                     </div>
+
+                    @if (isset($improvedBullets[$index]))
+                        <div class="mt-3 rounded-lg border border-indigo-200 bg-indigo-50 p-4 space-y-3">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-700">AI suggestion</p>
+                            <ul class="space-y-1 text-sm text-gray-800 list-disc list-inside">
+                                @foreach ($improvedBullets[$index] as $suggested)
+                                    <li>{{ $suggested }}</li>
+                                @endforeach
+                            </ul>
+                            <div class="flex items-center gap-3">
+                                <button type="button" wire:click="acceptImprovedBullets({{ $index }})" wire:loading.attr="disabled" class="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+                                    Use these
+                                </button>
+                                <button type="button" wire:click="discardImprovedBullets({{ $index }})" wire:loading.attr="disabled" class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900">
+                                    Discard
+                                </button>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         @endforeach

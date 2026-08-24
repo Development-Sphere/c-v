@@ -40,4 +40,13 @@ return [
         'no_sandbox' => env('BROWSERSHOT_NO_SANDBOX', false),
     ],
 
+    'gemini' => [
+        'timeout' => env('GEMINI_TIMEOUT', 30),
+        // The SDK's own default text model (gemini-3.7-flash at time of writing)
+        // has been unreliable/overloaded in testing; flash-lite is fast, cheap,
+        // and plenty capable for CV phrasing/suggestion tasks. Override via env
+        // if a future model deprecation requires it (model names churn often).
+        'model' => env('GEMINI_MODEL', 'gemini-3.5-flash-lite'),
+    ],
+
 ];

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Cv;
 use App\Models\CvTemplate;
+use App\Services\GeminiService;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -34,6 +35,12 @@ class CvBuilder extends Component
     public ?string $title = null;
 
     public int $previewVersion = 0;
+
+    public ?string $aiError = null;
+
+    public array $improvedBullets = [];
+
+    public array $suggestedSkills = [];
 
     public function mount(Cv $cv): void
     {
@@ -215,6 +222,114 @@ class CvBuilder extends Component
     {
         $this->template = $key;
         $this->persist();
+    }
+
+    public function polishSummary(GeminiService $gemini): void
+    {
+        $this->aiError = null;
+        $raw = trim($this->summary['raw'] ?? '');
+
+        if ($raw === '') {
+            return;
+        }
+
+        $polished = $gemini->polishSummary($raw);
+
+        if ($polished === null) {
+            $this->aiError = "We couldn't reach the AI polish service. Please try again in a moment.";
+
+            return;
+        }
+
+        $this->summary['polished'] = $polished;
+        $this->persist();
+    }
+
+    public function acceptPolishedSummary(): void
+    {
+        if (filled($this->summary['polished'] ?? null)) {
+            $this->summary['raw'] = $this->summary['polished'];
+        }
+
+        $this->summary['polished'] = '';
+        $this->persist();
+    }
+
+    public function discardPolishedSummary(): void
+    {
+        $this->summary['polished'] = '';
+        $this->persist();
+    }
+
+    public function improveBullets(int $index, GeminiService $gemini): void
+    {
+        $this->aiError = null;
+        $entry = $this->experience[$index] ?? null;
+
+        if (! $entry) {
+            return;
+        }
+
+        $bullets = array_values(array_filter($entry['bullets'] ?? [], fn ($b) => trim($b) !== ''));
+
+        if (empty($bullets)) {
+            return;
+        }
+
+        $improved = $gemini->improveBullets($bullets, $entry['title'] ?? null);
+
+        if ($improved === null) {
+            $this->aiError = "We couldn't reach the AI improve service. Please try again in a moment.";
+
+            return;
+        }
+
+        $this->improvedBullets[$index] = $improved;
+    }
+
+    public function acceptImprovedBullets(int $index): void
+    {
+        if (isset($this->improvedBullets[$index])) {
+            $this->experience[$index]['bullets'] = $this->improvedBullets[$index];
+            unset($this->improvedBullets[$index]);
+            $this->persist();
+        }
+    }
+
+    public function discardImprovedBullets(int $index): void
+    {
+        unset($this->improvedBullets[$index]);
+    }
+
+    public function suggestSkills(GeminiService $gemini): void
+    {
+        $this->aiError = null;
+        $context = $this->experience[0]['title'] ?? null;
+
+        $suggestions = $gemini->suggestSkills($this->skills, $context);
+
+        if ($suggestions === null) {
+            $this->aiError = "We couldn't reach the AI suggestion service. Please try again in a moment.";
+
+            return;
+        }
+
+        $this->suggestedSkills = array_values(array_diff($suggestions, $this->skills));
+    }
+
+    public function acceptSuggestedSkill(string $skill): void
+    {
+        if (! in_array($skill, $this->skills, true)) {
+            $this->skills[] = $skill;
+        }
+
+        $this->suggestedSkills = array_values(array_diff($this->suggestedSkills, [$skill]));
+        $this->persist();
+    }
+
+    public function dismissSuggestedSkills(): void
+    {
+        $this->suggestedSkills = [];
     }
 
     protected function rules(): array
