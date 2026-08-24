@@ -6,8 +6,11 @@
     wire:click="{{ $action }}"
     wire:loading.attr="disabled"
     wire:target="{{ $target }}"
-    class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50 disabled:opacity-50"
+    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-cobalt bg-cobalt-dim rounded hover:bg-cobalt hover:text-paper transition-colors disabled:opacity-60 disabled:cursor-wait"
 >
-    <span wire:loading.remove wire:target="{{ $target }}">{{ $label }}</span>
-    <span wire:loading wire:target="{{ $target }}">Thinking&hellip;</span>
+    <span wire:loading.remove wire:target="{{ $target }}" class="inline-flex items-center gap-1.5">
+        <x-icons.sparkle class="w-3.5 h-3.5" />
+        {{ $label }}
+    </span>
+    <span wire:loading wire:target="{{ $target }}" class="font-mono text-xs">Thinking&hellip;</span>
 </button>

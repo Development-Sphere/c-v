@@ -3,7 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $cv->personal_info['name'] ?: 'CV' }}</title>
+        <title>{{ ($cv->personal_info['name'] ?? '') ?:'CV' }}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
         <style>{!! \App\Support\CompiledAssets::css() !!}</style>
         <style>
             @page { margin: 0; }
@@ -21,7 +24,7 @@
 
         <div class="max-w-[210mm] mx-auto bg-white shadow-lg min-h-[297mm] p-10">
             <header class="text-center border-b-2 border-gray-800 pb-4">
-                <h1 class="text-3xl font-bold tracking-wide">{{ $cv->personal_info['name'] ?: 'Your Name' }}</h1>
+                <h1 class="text-3xl font-bold tracking-wide">{{ ($cv->personal_info['name'] ?? '') ?:'Your Name' }}</h1>
                 <p class="mt-2 text-sm text-gray-600">
                     {{ collect([$cv->personal_info['email'] ?? null, $cv->personal_info['phone'] ?? null, $cv->personal_info['location'] ?? null])->filter()->implode('  |  ') }}
                 </p>

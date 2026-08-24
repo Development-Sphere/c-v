@@ -5,31 +5,28 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }} - Build your CV</title>
+        <title>{{ config('app.name', 'Fair Copy') }} — Build your CV</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        @include('partials.fonts')
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen bg-gray-100">
-            <header class="bg-white shadow-sm">
-                <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-                    <a href="/" wire:navigate class="flex items-center gap-2">
-                        <x-application-logo class="w-8 h-8 fill-current text-gray-500" />
-                        <span class="font-semibold text-gray-700">{{ config('app.name', 'Laravel') }}</span>
+    <body class="font-sans text-ink antialiased">
+        <div class="min-h-screen bg-paper">
+            <header class="border-b border-rule bg-paper">
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+                    <a href="/" wire:navigate>
+                        <x-brand-mark />
                     </a>
 
-                    <a href="{{ auth()->check() ? route('dashboard') : url('/') }}" wire:navigate class="text-sm text-gray-500 hover:text-gray-800">
+                    <a href="{{ auth()->check() ? route('dashboard') : url('/') }}" wire:navigate class="font-mono text-xs uppercase tracking-wide text-ink-soft hover:text-cobalt transition-colors">
                         Save &amp; exit
                     </a>
                 </div>
             </header>
 
-            <main class="max-w-4xl mx-auto px-4 py-6">
+            <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
                 {{ $slot }}
             </main>
         </div>

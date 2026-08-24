@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::selection {
+    background-color: theme('colors.seal-dim');
+    color: theme('colors.ink');
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-stamp {
+        animation: none;
+    }
+}

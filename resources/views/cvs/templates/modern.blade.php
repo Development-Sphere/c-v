@@ -3,7 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $cv->personal_info['name'] ?: 'CV' }}</title>
+        <title>{{ ($cv->personal_info['name'] ?? '') ?:'CV' }}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
         <style>{!! \App\Support\CompiledAssets::css() !!}</style>
         <style>
             @page { margin: 0; }
@@ -13,7 +16,7 @@
             }
         </style>
     </head>
-    <body class="font-sans text-gray-800 bg-gray-200">
+    <body class="font-serif text-gray-800 bg-gray-200">
         @php
             $formatMonth = fn (?string $v) => $v ? \Carbon\Carbon::parse($v.'-01')->format('M Y') : '';
             $dateRange = fn (array $entry) => trim(($formatMonth($entry['start_date'] ?? null)).' – '.(($entry['current'] ?? false) ? 'Present' : $formatMonth($entry['end_date'] ?? null)), ' –');
@@ -21,7 +24,7 @@
 
         <div class="max-w-[210mm] mx-auto bg-white shadow-lg flex min-h-[297mm]">
             <aside class="w-1/3 bg-slate-800 text-slate-100 p-8">
-                <h1 class="text-2xl font-bold leading-tight">{{ $cv->personal_info['name'] ?: 'Your Name' }}</h1>
+                <h1 class="text-2xl font-bold leading-tight">{{ ($cv->personal_info['name'] ?? '') ?:'Your Name' }}</h1>
 
                 <div class="mt-6 space-y-1 text-sm text-slate-300 break-words">
                     @if ($cv->personal_info['email'] ?? null)<p>{{ $cv->personal_info['email'] }}</p>@endif
